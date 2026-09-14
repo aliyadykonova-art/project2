@@ -1,0 +1,2 @@
+nane = "hi"
+print(nane)
