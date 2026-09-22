@@ -115,7 +115,6 @@ class TestSortByDate:
         assert [op["id"] for op in result] == [2, 1]
 
     def test_non_iso_dates_can_sort_incorrectly(self):
-
         ops = [
             {"id": 1, "date": "2021-01-01T00:00:00.000000"},
             {"id": 2, "date": "2020-09-01T00:00:00.000000"},

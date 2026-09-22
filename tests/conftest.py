@@ -6,7 +6,6 @@ import pytest
 @pytest.fixture
 def sample_transactions() -> list[dict]:
     """
-
     Базовый набор транзакций с разными статусами и датами.
     Используется в тестах filter_by_state и sort_by_date.
     """
