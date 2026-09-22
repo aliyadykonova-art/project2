@@ -7,7 +7,6 @@ import pytest
 def sample_transactions() -> list[dict]:
     """
     Базовый набор транзакций с разными статусами и датами.
-
     Используется в тестах filter_by_state и sort_by_date.
     """
     return [
@@ -22,8 +21,7 @@ def sample_transactions() -> list[dict]:
 def transactions_same_date() -> list[dict]:
     """
     Транзакции с одинаковыми датами.
-
-    Нужны для проверки стабильности сортировки (stable sort) —
+    Нужны для проверки стабильности сортировки (stable sort)
     порядок элементов с одинаковой датой не должен меняться.
     """
     return [

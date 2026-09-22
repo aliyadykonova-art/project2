@@ -33,7 +33,7 @@ class TestMaskCardNumber:
             mask_card_number(None)
 
     def test_non_digits_16_chars(self):
-        # фиксируем текущее поведение: валидации на цифры нет
+
         assert mask_card_number("abcdefghijklmnop") == "abcd ef** **** mnop"
 
 

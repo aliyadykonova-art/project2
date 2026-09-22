@@ -15,7 +15,7 @@ class TestFilterByState:
             ("EXECUTED", [41428829, 939719570]),
             ("CANCELED", [594226727, 615064591]),
             ("PENDING", []),
-            ("executed", []),  # регистрозависимость
+            ("executed", []),
         ],
     )
     def test_various_states(self, sample_transactions, state, expected_ids):

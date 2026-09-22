@@ -18,12 +18,12 @@ class TestGetMaskCardNumber:
     @pytest.mark.parametrize(
         "invalid_input",
         [
-            "",                       # пустая строка
-            "1234",                   # слишком короткий
-            "123456789012345",        # 15 цифр
-            "12345678901234567",      # 17 цифр
-            "abcd efgh ijkl mnop",    # не цифры
-            "7000 7922 8960 6361",    # с пробелами (если не поддерживаем)
+            "",
+            "1234",
+            "123456789012345",
+            "12345678901234567",
+            "abcd efgh ijkl mnop",
+            "7000 7922 8960 6361",
         ],
     )
     def test_invalid_card_numbers(self, invalid_input):
