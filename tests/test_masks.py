@@ -52,10 +52,10 @@ class TestGetMaskAccount:
     @pytest.mark.parametrize(
         "invalid_input",
         [
-            "",                # пустая строка
-            "123",             # короче 4
-            "abcd",            # не цифры
-            "1234abcd5678",    # смешанное
+            "",
+            "123",
+            "abcd",
+            "1234abcd5678",
         ],
     )
     def test_invalid_account_numbers(self, invalid_input):

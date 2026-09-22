@@ -43,7 +43,7 @@ class TestMaskAccountNumber:
         [
             ("73654108430135874305", "**4305"),
             ("12345678901234567890", "**7890"),
-            ("1234", "**1234"),  # граница: ровно 4
+            ("1234", "**1234"),
         ],
     )
     def test_valid_or_boundary(self, number, expected):
