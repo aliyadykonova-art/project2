@@ -10,7 +10,7 @@ def mask_account_number(number: str) -> str:
     if len(number) < 4:
         return number
     return f"**{number[-4:]}"
-
+ 
 
 def mask_account_card(info: str) -> str:
     """Принимает строку с типом и номером карты/счета и маскирует номер."""
