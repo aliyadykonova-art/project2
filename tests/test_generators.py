@@ -1,7 +1,10 @@
 import pytest
 
-from src.generators import (card_number_generator, filter_by_currency,
-                            transaction_descriptions)
+from src.generators import (
+    card_number_generator,
+    filter_by_currency,
+    transaction_descriptions,
+)
 
 
 @pytest.fixture
@@ -10,31 +13,32 @@ def sample_transactions():
         {
             "id": 1,
             "description": "Перевод организации",
-            "operation": {"currency": {"name": "Рубль", "code": "RUB"}}
+            "operation": {"currency": {"name": "Рубль", "code": "RUB"}},
         },
         {
             "id": 2,
             "description": "Покупка в магазине",
-            "operation": {"currency": {"name": "Доллар", "code": "USD"}}
+            "operation": {"currency": {"name": "Доллар", "code": "USD"}},
         },
         {
             "id": 3,
-            # Здесь специально нет описания для проверки значения по умолчанию
-            "operation": {"currency": {"name": "Рубль", "code": "RUB"}}
-        }
+            # Здесь специально нет описания для проверки значения
+            # по умолчанию
+            "operation": {"currency": {"name": "Рубль", "code": "RUB"}},
+        },
     ]
 
 
 @pytest.fixture
 def transactions_without_operation():
-    """Транзакции без ключа operation для проверки безопасности .get()."""
+    """Транзакции без ключа operation для проверки .get()."""
     return [
         {"id": 1, "description": "Без операции"},
         {"id": 2, "description": "Тоже без операции", "operation": {}},
     ]
 
 
-# ---------- filter_by_currency ----------
+
 
 def test_filter_by_currency_rub(sample_transactions):
     """Проверяем фильтрацию по RUB (должно быть 2 транзакции)."""
@@ -58,9 +62,13 @@ def test_filter_by_currency_no_match(sample_transactions):
     assert result == []
 
 
-def test_filter_by_currency_without_operation(transactions_without_operation):
+def test_filter_by_currency_without_operation(
+    transactions_without_operation,
+):
     """Проверяем, что отсутствие operation не ломает генератор."""
-    result = list(filter_by_currency(transactions_without_operation, "RUB"))
+    result = list(
+        filter_by_currency(transactions_without_operation, "RUB")
+    )
     assert result == []
 
 
@@ -71,10 +79,9 @@ def test_filter_by_currency_returns_iterator(sample_transactions):
     assert hasattr(result, "__next__")
 
 
-# ---------- transaction_descriptions ----------
 
 def test_transaction_descriptions(sample_transactions):
-    """Проверяем корректное извлечение описаний и обработку дефолтного значения."""
+    """Проверяем извлечение описаний и дефолтное значение."""
     descriptions_gen = transaction_descriptions(sample_transactions)
     result_list = list(descriptions_gen)
 
@@ -97,7 +104,7 @@ def test_transaction_descriptions_is_generator(sample_transactions):
     assert hasattr(gen, "__next__")
 
 
-# ---------- card_number_generator ----------
+
 
 def test_card_number_generator_format():
     """Проверяем формат номеров карт и дополнение нулями."""
@@ -127,11 +134,13 @@ def test_card_number_generator_zero_start():
 
 def test_card_number_generator_max_value():
     """Проверяем генерацию максимального 16-значного номера."""
-    card_gen = card_number_generator(9999999999999999, 9999999999999999)
+    card_gen = card_number_generator(
+        9999999999999999, 9999999999999999
+    )
     assert list(card_gen) == ["9999 9999 9999 9999"]
 
 
 def test_card_number_generator_start_greater_than_stop():
-    """Если start > stop, генератор не должен возвращать значения."""
+    """Если start > stop, генератор ничего не вернёт."""
     card_gen = card_number_generator(5, 1)
     assert list(card_gen) == []
