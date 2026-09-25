@@ -1,2 +1,0 @@
-nane = "hi"
-print(nane)
