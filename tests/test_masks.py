@@ -1,8 +1,10 @@
 import pytest
+
 from src.masks import get_mask_account, get_mask_card_number
 
 
 class TestGetMaskCardNumber:
+
     @pytest.mark.parametrize(
         "card_number, expected",
         [
@@ -37,6 +39,7 @@ class TestGetMaskCardNumber:
 
 
 class TestGetMaskAccount:
+
     @pytest.mark.parametrize(
         "account_number, expected",
         [
