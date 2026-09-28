@@ -9,6 +9,7 @@ from src.widget import (
 
 
 class TestMaskCardNumber:
+
     @pytest.mark.parametrize(
         "number, expected",
         [
@@ -33,11 +34,11 @@ class TestMaskCardNumber:
             mask_card_number(None)
 
     def test_non_digits_16_chars(self):
-
         assert mask_card_number("abcdefghijklmnop") == "abcd ef** **** mnop"
 
 
 class TestMaskAccountNumber:
+
     @pytest.mark.parametrize(
         "number, expected",
         [
@@ -59,6 +60,7 @@ class TestMaskAccountNumber:
 
 
 class TestMaskAccountCard:
+
     @pytest.mark.parametrize(
         "raw, expected",
         [
@@ -81,7 +83,6 @@ class TestMaskAccountCard:
             mask_account_card(None)
 
     def test_only_name_returns_garbage(self):
-
         assert mask_account_card("Visa") == " Visa"
 
     def test_number_without_name(self):
@@ -89,12 +90,12 @@ class TestMaskAccountCard:
         assert mask_account_card("7000792289606361") == " 7000 79** **** 6361"
 
     def test_multiword_account_name_goes_to_card_branch(self):
-
         result = mask_account_card("Расчетный счет 12345678901234567890")
         assert result == "Расчетный счет 12345678901234567890"
 
 
 class TestGetDate:
+
     @pytest.mark.parametrize(
         "raw, expected",
         [
@@ -118,7 +119,6 @@ class TestGetDate:
             get_date(None)
 
     def test_garbage_with_three_parts_returns_garbage(self):
-
         assert get_date("not-a-date") == "date.a.not"
 
     def test_too_many_parts_raises(self):
