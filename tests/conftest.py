@@ -1,12 +1,10 @@
 import pytest
 
 
-
-
 @pytest.fixture
 def sample_transactions() -> list[dict]:
-    """
-    Базовый набор транзакций с разными статусами и датами.
+    """Базовый набор транзакций с разными статусами и датами.
+
     Используется в тестах filter_by_state и sort_by_date.
     """
     return [
@@ -19,8 +17,8 @@ def sample_transactions() -> list[dict]:
 
 @pytest.fixture
 def transactions_same_date() -> list[dict]:
-    """
-    Транзакции с одинаковыми датами.
+    """Транзакции с одинаковыми датами.
+
     Нужны для проверки стабильности сортировки (stable sort)
     порядок элементов с одинаковой датой не должен меняться.
     """
@@ -39,16 +37,14 @@ def empty_transactions() -> list[dict]:
 
 @pytest.fixture
 def no_matching_state() -> list[dict]:
-    """
-    Список транзакций, среди которых нет ни одной
+    """Список транзакций, среди которых нет ни одной
+
     с ожидаемым статусом (например, EXECUTED).
     """
     return [
         {"id": 1, "state": "PENDING", "date": "2020-01-01T00:00:00.000000"},
         {"id": 2, "state": "FAILED", "date": "2021-01-01T00:00:00.000000"},
     ]
-
-
 
 
 @pytest.fixture
@@ -81,11 +77,9 @@ def valid_iso_date() -> str:
     return "2019-07-03T18:35:29.512364"
 
 
-
 @pytest.fixture(params=["EXECUTED", "CANCELED", "PENDING", "FAILED"])
 def any_state(request) -> str:
-    """
-    Перебирает различные возможные значения статуса.
+    """Перебирает различные возможные значения статуса.
 
     Использование в тесте:
         def test_something(any_state):
