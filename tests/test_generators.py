@@ -38,8 +38,6 @@ def transactions_without_operation():
     ]
 
 
-
-
 def test_filter_by_currency_rub(sample_transactions):
     """Проверяем фильтрацию по RUB (должно быть 2 транзакции)."""
     result_iterator = filter_by_currency(sample_transactions, "RUB")
@@ -79,7 +77,6 @@ def test_filter_by_currency_returns_iterator(sample_transactions):
     assert hasattr(result, "__next__")
 
 
-
 def test_transaction_descriptions(sample_transactions):
     """Проверяем извлечение описаний и дефолтное значение."""
     descriptions_gen = transaction_descriptions(sample_transactions)
@@ -102,8 +99,6 @@ def test_transaction_descriptions_is_generator(sample_transactions):
     gen = transaction_descriptions(sample_transactions)
     assert hasattr(gen, "__iter__")
     assert hasattr(gen, "__next__")
-
-
 
 
 def test_card_number_generator_format():
