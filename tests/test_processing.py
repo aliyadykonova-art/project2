@@ -4,6 +4,7 @@ from src.processing import filter_by_state, get_date, sort_by_date
 
 
 class TestFilterByState:
+
     def test_default_state_executed(self, sample_transactions):
         result = filter_by_state(sample_transactions)
         assert len(result) == 2
@@ -52,6 +53,7 @@ class TestFilterByState:
 
 
 class TestGetDate:
+
     def test_returns_date_when_present(self):
         op = {"id": 1, "date": "2019-07-03T18:35:29.512364"}
         assert get_date(op) == "2019-07-03T18:35:29.512364"
@@ -66,8 +68,8 @@ class TestGetDate:
             get_date(bad_input)
 
 
-
 class TestSortByDate:
+
     def test_descending_by_default(self, sample_transactions):
         result = sort_by_date(sample_transactions)
         dates = [op["date"] for op in result]
@@ -105,7 +107,6 @@ class TestSortByDate:
         assert [op["id"] for op in result] == [2, 1]
 
     def test_non_iso_dates_sort_lexicographically(self):
-
         ops = [
             {"id": 1, "date": "31.12.2020"},
             {"id": 2, "date": "01.01.2019"},
