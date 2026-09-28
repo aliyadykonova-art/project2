@@ -1,34 +1,30 @@
-from collections.abc import Generator, Iterator
+from collections.abc import Generator
 from typing import Any
 
 
 def filter_by_currency(
     transactions: list[dict[str, Any]],
     currency: str,
-) -> Iterator[dict[str, Any]]:
-    """
-    Фильтрует транзакции по коду валюты.
+) -> Generator[dict[str, Any], None, None]:
+    """Фильтрует транзакции по коду валюты.
 
     Принимает список словарей (транзакции) и код валюты.
-    Возвращает итератор с транзакциями, у которых код валюты
+    Возвращает генератор с транзакциями, у которых код валюты
     совпадает с переданным.
     """
-    return (
-        transaction
-        for transaction in transactions
-        if transaction.get("operation", {})
-        .get("currency", {})
-        .get("code") == currency
-    )
+    for transaction in transactions:
+        # Проверяем оба часто встречающихся ключа: operation и operationAmount
+        op_data = transaction.get("operation") or transaction.get("operationAmount") or {}
+        currency_code = op_data.get("currency", {}).get("code")
+        
+        if currency_code == currency:
+            yield transaction
 
 
 def transaction_descriptions(
     transactions: list[dict[str, Any]],
 ) -> Generator[str, None, None]:
-    """
-    Генератор описаний транзакций.
-
-    Generator[yieldReturnType, SendDataType, ReturnDataType].
+    """Генератор описаний транзакций.
 
     Принимает список словарей (транзакции) и поочерёдно возвращает
     описание каждой транзакции. Если описание отсутствует,
@@ -38,15 +34,13 @@ def transaction_descriptions(
         yield transaction.get("description", "Описание отсутствует")
 
 
-def card_number_generator(start: int, stop: int) -> Iterator[str]:
-    """
-    Генератор номеров карт в формате 'XXXX XXXX XXXX XXXX'.
+def card_number_generator(start: int, stop: int) -> Generator[str, None, None]:
+    """Генератор номеров карт в формате 'XXXX XXXX XXXX XXXX'.
 
     Принимает начало и конец диапазона номеров карт (включительно)
-    и возвращает итератор со строками — номерами карт.
+    и возвращает генератор со строками — номерами карт.
     """
     for card_number in range(start, stop + 1):
         card_str = f"{card_number:016d}"
-        yield " ".join(
-            card_str[i:i + 4] for i in range(0, 16, 4)
-        )
+        # Форматируем строку по 4 цифры через пробел
+        yield " ".join(card_str[i:i + 4] for i in range(0, 16, 4))
