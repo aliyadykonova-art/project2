@@ -2,10 +2,10 @@
 clear
 
 echo "flake8 running..."
-poetry run flake8 .
+poetry run flake8 src tests
 
 echo "isort running..."
-poetry run isort .
+poetry run isort src tests
 
 echo "mypy running..."
-poetry run mypy .
+poetry run mypy src tests
