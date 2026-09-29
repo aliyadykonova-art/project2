@@ -1,24 +1,19 @@
 def get_mask_card_number(card_number: str) -> str:
-    """Функция маскировки номера карты.
+    """Маскирует номер карты, заменяя символы с 6 по 11 на звездочки."""
+    card_number_formatted = ""
 
-    Преобразует строку из 16 цифр в формат: XXXX XX** **** XXXX
-    """
-    # Убираем пробелы, если они были во входной строке
-    card_number = card_number.replace(" ", "")
+    for i in range(len(card_number)):
+        if i > 0 and i % 4 == 0:
+            card_number_formatted += " "
 
-    # Вырезаем нужные части карты по индексам
-    first_chunk = card_number[:4]
-    second_chunk = card_number[4:6] + "**"
-    third_chunk = "****"
-    fourth_chunk = card_number[12:]
+        if 5 <= i <= 11:
+            card_number_formatted += "*"
+        else:
+            card_number_formatted += card_number[i]
 
-    # Собираем всё вместе через пробел
-    return f"{first_chunk} {second_chunk} {third_chunk} {fourth_chunk}"
+    return card_number_formatted
 
 
-def get_mask_account(account_number: str) -> str:
-    """Функция маскировки номера счета.
-
-    Оставляет только последние 4 цифры счета и добавляет перед ними **.
-    """
-    return "**" + account_number[-4:]
+def get_mask_account(card_number: str) -> str:
+    """Маскирует номер счета, оставляя только последние 4 цифры."""
+    return "**" + card_number[-4:]
