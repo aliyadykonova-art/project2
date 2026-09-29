@@ -1,40 +1,20 @@
-def mask_card_number(number: str) -> str:
-    """Маскирует номер карты в формат"""
-    if len(number) != 16:
-        return number
-    return f"{number[:4]} {number[4:6]}** **** {number[12:]}"
+from . import masks  # относительный import для файлов в одной папке
 
 
-def mask_account_number(number: str) -> str:
-    """Маскирует номер счета в формат"""
-    if len(number) < 4:
-        return number
-    return f"**{number[-4:]}"
+def mask_account_card(card_data: str) -> str:
+    card_number = card_data.split(" ")[-1] # take only the card number
+    card_type = card_data.rstrip(card_number)
 
-
-def mask_account_card(info: str) -> str:
-    """Принимает строку с типом и номером карты/счета и маскирует номер."""
-    # Разбиваем строку на отдельные элементы
-    parts = info.split()
-
-    # Последний элемент — это всегда номер, остальное — название
-    number = parts[-1]
-    name = " ".join(parts[:-1])
-
-    # Проверяем тип и маскируем
-    if name.lower() == "счет":
-        masked_number = mask_account_number(number)
+    if card_type.startswith("Счет"):
+        return card_type + masks.get_mask_account(card_number)
     else:
-        masked_number = mask_card_number(number)
+        return card_type + masks.get_mask_card_number(card_number)
 
-    return f"{name} {masked_number}"
+def get_date(date: str) -> str:
+    date_parts = date.split("-")
 
-
-def get_date(date_str: str) -> str:
-    """Преобразует строку ISO даты 'YYYY-MM-DDTHH:MM:SS...' в 'ДД.ММ.ГГГГ'"""
-    # Выделяем только часть с датой (до символа 'T')
-    date_part = date_str.split("T")[0]
-    # Разделяем год, месяц и день
-    year, month, day = date_part.split("-")
+    day = date_parts[2][0:2]
+    month = date_parts[1]
+    year = date_parts[0]
 
     return f"{day}.{month}.{year}"
