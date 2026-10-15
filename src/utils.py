@@ -1,77 +1,56 @@
 import json
 import logging
-import os
+from pathlib import Path
 
 import pandas as pd
 
-# Автоматически создаем папку logs, если ее еще нет
-os.makedirs("logs", exist_ok=True)
-
-logger = logging.getLogger("utils")
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 file_handler = logging.FileHandler("logs/utils.log", mode="w", encoding="utf-8")
-file_handler.setLevel(logging.DEBUG)
-
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 file_handler.setFormatter(formatter)
-
-if not logger.handlers:
-    logger.addHandler(file_handler)
+logger.addHandler(file_handler)
 
 
-def get_financial_data(path: str) -> list[dict]:
-    """Читает финансовые данные из JSON файла."""
-    logger.info(f"Попытка чтения данных из файла: {path}")
-
-    if not os.path.exists(path):
-        logger.error(f"Файл не найден по пути: {path}")
-        return []
-
+def read_json_file(file_path: str) -> list[dict]:
+    """Читает JSON-файл и возвращает список транзакций."""
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                logger.info(f"Данные успешно загружены из файла {path}. Найдено записей: {len(data)}")
-                return data
-            else:
-                logger.warning(f"Файл {path} содержит не список, а {type(data).__name__}")
-                return []
-    except json.JSONDecodeError as e:
-        logger.error(f"Ошибка декодирования JSON в файле {path}: {e}")
+        with Path(file_path).open(encoding="utf-8") as file:
+            data = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        logger.error("Не удалось прочитать файл: %s", file_path)
         return []
-    except Exception as e:
-        logger.error(f"Непредвиденная ошибка при чтении файла {path}: {e}")
+
+    if not isinstance(data, list):
+        logger.error("Файл не содержит список данных: %s", file_path)
         return []
+
+    logger.info("Файл успешно прочитан: %s", file_path)
+    return data
 
 
 def read_transactions_from_csv(file_path: str) -> list[dict]:
-    """Считывает финансовые транзакции из CSV-файла с помощью pandas."""
-    logger.info(f"Попытка чтения CSV-файла: {file_path}")
-    if not os.path.exists(file_path):
-        logger.error(f"CSV-файл не найден по пути: {file_path}")
-        return []
+    """Читает CSV-файл и возвращает список транзакций."""
     try:
         df = pd.read_csv(file_path)
         transactions = df.to_dict(orient="records")
-        logger.info(f"CSV-файл успешно прочитан. Найдено записей: {len(transactions)}")
-        return transactions
-    except Exception as e:
-        logger.error(f"Ошибка при чтении CSV-файла {file_path}: {e}")
+    except (FileNotFoundError, pd.errors.ParserError, UnicodeDecodeError) as error:
+        logger.error("Не удалось прочитать CSV-файл %s: %s", file_path, error)
         return []
+
+    logger.info("CSV-файл успешно прочитан: %s", file_path)
+    return transactions
 
 
 def read_transactions_from_excel(file_path: str) -> list[dict]:
-    """Считывает финансовые транзакции из XLSX-файла с помощью pandas."""
-    logger.info(f"Попытка чтения Excel-файла: {file_path}")
-    if not os.path.exists(file_path):
-        logger.error(f"Excel-файл не найден по пути: {file_path}")
-        return []
+    """Читает Excel-файл и возвращает список транзакций."""
     try:
         df = pd.read_excel(file_path)
         transactions = df.to_dict(orient="records")
-        logger.info(f"Excel-файл успешно прочитан. Найдено записей: {len(transactions)}")
-        return transactions
-    except Exception as e:
-        logger.error(f"Ошибка при чтении Excel-файла {file_path}: {e}")
+    except (FileNotFoundError, ValueError, OSError) as error:
+        logger.error("Не удалось прочитать Excel-файл %s: %s", file_path, error)
         return []
+
+    logger.info("Excel-файл успешно прочитан: %s", file_path)
+    return transactions
