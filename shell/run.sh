@@ -1,3 +1,3 @@
 clear
 
-poetry run python src/main.py
+poetry run python main.py
