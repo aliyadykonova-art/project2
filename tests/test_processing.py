@@ -1,7 +1,7 @@
 import pytest
 
 from src.processing import filter_by_state, sort_by_date
-
+from src.processing import process_bank_operations, process_bank_search
 
 @pytest.fixture
 def sample_operations() -> list[dict]:
@@ -18,10 +18,12 @@ def sample_operations() -> list[dict]:
     "state_arg, expected_ids",
     [
         ("EXECUTED", [1, 3]),  # ожидаемые id для "EXECUTED"
-        ("CANCELED", [2]),     # ожидаемые id для "CANCELED"
+        ("CANCELED", [2]),  # ожидаемые id для "CANCELED"
     ],
 )
-def test_filter_by_state(sample_operations: list[dict], state_arg: str, expected_ids: list[int]) -> None:
+def test_filter_by_state(
+    sample_operations: list[dict], state_arg: str, expected_ids: list[int]
+) -> None:
     result = filter_by_state(sample_operations, state_arg)
 
     result_ids = []
@@ -34,11 +36,13 @@ def test_filter_by_state(sample_operations: list[dict], state_arg: str, expected
 @pytest.mark.parametrize(
     "reverse_arg, expected_ids",
     [
-        (True, [1, 2, 3]),   # от новых к старым id
+        (True, [1, 2, 3]),  # от новых к старым id
         (False, [3, 2, 1]),  # от старых к новым id
     ],
 )
-def test_sort_by_date(sample_operations: list[dict], reverse_arg: bool, expected_ids: list[int]) -> None:
+def test_sort_by_date(
+    sample_operations: list[dict], reverse_arg: bool, expected_ids: list[int]
+) -> None:
     result = sort_by_date(sample_operations, reverse_arg)
 
     result_ids = []
@@ -46,3 +50,40 @@ def test_sort_by_date(sample_operations: list[dict], reverse_arg: bool, expected
         result_ids.append(op["id"])
 
     assert result_ids == expected_ids
+
+def test_filter_by_state_case_insensitive() -> None:
+    operations = [
+        {"state": "executed"},
+        {"state": "CANCELED"},
+        {"state": "EXECUTED"},
+    ]
+
+    assert len(filter_by_state(operations, "EXECUTED")) == 2
+
+
+def test_process_bank_search() -> None:
+    operations = [
+        {"description": "Payment at Store"},
+        {"description": "Transfer to friend"},
+        {"description": "STORE purchase"},
+    ]
+
+    result = process_bank_search(operations, "store")
+
+    assert len(result) == 2
+
+
+def test_process_bank_search_invalid_regex() -> None:
+    assert process_bank_search([{"description": "test"}], "[") == []
+
+
+def test_process_bank_operations() -> None:
+    operations = [
+        {"description": "Payment at Store"},
+        {"description": "Payment online"},
+        {"description": "Store purchase"},
+    ]
+
+    result = process_bank_operations(operations, ["payment", "store", "travel"])
+
+    assert result == {"payment": 2, "store": 2, "travel": 0}
