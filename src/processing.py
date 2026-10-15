@@ -1,49 +1,63 @@
 import re
+
+from collections import Counter
 from typing import Any
 
-
-def filter_by_state(data_list: list[dict], state: str = "EXECUTED") -> list[dict]:
-    """Фильтрует список словарей по значению ключа 'state'."""
-    filtered_data = []
-
-    for item in data_list:
-        if item.get("state") == state:
-            filtered_data.append(item)
-
-    return filtered_data
-
-
-def sort_by_date(data_list: list[dict], descending: bool = True) -> list[dict]:
-    """Сортирует список словарей по дате."""
-    return sorted(data_list, key=lambda x: x["date"], reverse=descending)
-
-def process_bank_search(data: list[dict[str, Any]], search_string: str) -> list[dict[str, Any]]:
-    """Принимает список словарей с транзакциями и строку поиска,
-
-    возвращает список словарей, у которых в описании есть данная строка (через regex).
-    """
-    matched_transactions = []
-    pattern = re.compile(re.escape(search_string), re.IGNORECASE)
-
-    for transaction in data:
-        description = transaction.get("description", "")
-        if description and pattern.search(str(description)):
-            matched_transactions.append(transaction)
-
-    return matched_transactions
+def filter_by_state(
+    operations: list[dict[str, Any]], state: str = "EXECUTED"
+) -> list[dict[str, Any]]:
+    """Возвращает операции с указанным статусом без учёта регистра."""
+    expected_state = state.upper()
+    return [
+        operation
+        for operation in operations
+        if str(operation.get("state", "")).upper() == expected_state
+    ]
 
 
-def process_bank_operations(data: list[dict[str, Any]], categories: list[str]) -> dict[str, int]:
-    """Принимает список словарей и список категорий,
+def get_date(operation: dict[str, Any]) -> str:
+    """Возвращает дату операции."""
+    return str(operation.get("date", operation.get("Дата", "")))
 
-    возвращает словарь с количеством операций для каждой категории.
-    """
-    category_counts = {category: 0 for category in categories}
 
-    for transaction in data:
-        description = transaction.get("description", "")
-        for category in categories:
-            if description and category.lower() in str(description).lower():
-                category_counts[category] += 1
+def sort_by_date(
+    operations: list[dict[str, Any]], reverse: bool = True
+) -> list[dict[str, Any]]:
+    """Сортирует операции по дате, не изменяя исходный список."""
+    return sorted(operations, key=get_date, reverse=reverse)
 
-    return category_counts
+
+def process_bank_search(
+    operations: list[dict[str, Any]], search: str
+) -> list[dict[str, Any]]:
+    """Находит операции, описание которых соответствует регулярному выражению."""
+    try:
+        pattern = re.compile(search, re.IGNORECASE)
+    except re.error:
+        return []
+
+    return [
+        operation
+        for operation in operations
+        if pattern.search(
+            str(operation.get("description", operation.get("Описание", "")))
+        )
+    ]
+
+
+def process_bank_operations(
+    operations: list[dict[str, Any]], categories: list[str]
+) -> dict[str, int]:
+    """Подсчитывает операции, в описании которых встречается каждая категория."""
+    descriptions = [
+        str(operation.get("description", operation.get("Описание", ""))).lower()
+        for operation in operations
+    ]
+
+    return {
+        category: sum(
+            1 for description in descriptions
+            if category.lower() in description
+        )
+        for category in categories
+    }
