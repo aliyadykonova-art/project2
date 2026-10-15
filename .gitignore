@@ -220,6 +220,16 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+.venv/
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+.pytest_cache/
+logs/
+*.log
+*.zip
+
 # Streamlit
 .streamlit/secrets.toml
 ssh-keygen -t ed25519
