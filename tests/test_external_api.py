@@ -1,60 +1,25 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, patch
 
-from src.external_api import convert_currency
-
-
-def test_convert_rub():
-    transaction = {
-        "amount": "1000",
-        "currency": "RUB",
-    }
-
-    result = convert_currency(transaction)
-
-    assert result == 1000.0
+from src.external_api import convert_to_rub
 
 
-@patch("src.external_api.requests.get")
-def test_convert_usd(mock_get):
-    mock_response = Mock()
-    mock_response.json.return_value = {
-        "rates": {
-            "RUB": 80.0,
-        }
-    }
-    mock_response.raise_for_status.return_value = None
-    mock_get.return_value = mock_response
-
-    transaction = {
-        "amount": "100",
-        "currency": "USD",
-    }
-
-    result = convert_currency(transaction)
-
-    assert result == 8000.0
-
-    mock_get.assert_called_once()
+def test_convert_rub() -> None:
+    """Тест возврата суммы без запроса к API, если валюта RUB."""
+    transaction = {"operationAmount": {"amount": "100.0", "currency": {"code": "RUB"}}}
+    assert convert_to_rub(transaction) == 100.0
 
 
-@patch("src.external_api.requests.get")
-def test_convert_eur(mock_get):
-    mock_response = Mock()
-    mock_response.json.return_value = {
-        "rates": {
-            "RUB": 90.0,
-        }
-    }
-    mock_response.raise_for_status.return_value = None
-    mock_get.return_value = mock_response
+@patch("os.getenv", return_value="fake_api_key")
+@patch("requests.get")
+def test_convert_usd_success(mock_get: MagicMock, mock_getenv: MagicMock) -> None:
+    """Тест успешной конвертации USD в RUB с помощью маков."""
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = {"result": 7500.0}
 
-    transaction = {
-        "amount": "100",
-        "currency": "EUR",
-    }
+    transaction = {"operationAmount": {"amount": "100.0", "currency": {"code": "USD"}}}
+    assert convert_to_rub(transaction) == 7500.0
 
-    result = convert_currency(transaction)
 
-    assert result == 9000.0
-
-    mock_get.assert_called_once()
+def test_convert_invalid_transaction() -> None:
+    """Тест обработки некорректных данных транзакции."""
+    assert convert_to_rub({}) == 0.0
