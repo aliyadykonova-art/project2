@@ -1,18 +1,31 @@
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("logs/masks.log", mode="w", encoding="utf-8")
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+
 def get_mask_card_number(card_number: str) -> str:
-    result = ""
-    #Функция маскировки номера карты
+    card_number_formatted = ""
+
     for i in range(len(card_number)):
         if i > 0 and i % 4 == 0:
-            result += " "
-           #Считает числа до 4 и ставит пробел
-        if i > 5 and i < 12:
-            result += "*"
-            #читает числа от 5 до 12 и скрывает их
-        else:
-            result += card_number[i]
+            card_number_formatted += " "
 
-    return result
+        if i > 5 and i < 12:
+            card_number_formatted += "*"
+        else:
+            card_number_formatted += card_number[i]
+
+    logger.info("Номер карты успешно замаскирован")
+    return card_number_formatted
+
 
 def get_mask_account(card_number: str) -> str:
-            #читывает последние 4 числа и перед ним ставит звездочки
-    return "**" + card_number[-4::]
+    result = "**" + card_number[-4:]
+    logger.info("Номер счета успешно замаскирован")
+    return result
