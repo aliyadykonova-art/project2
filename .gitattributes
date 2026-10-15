@@ -1,0 +1,4 @@
+# Git будет игнорировать файлы в папке htmlcov/, и не будет считать их за часть проекта (в списке языков, которые испольщуются в репозитории)
+htmlcov/** linguist-generated=true
+htmlcov/** -diff
+htmlcov/** -text
